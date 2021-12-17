@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +20,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4xhjwq%*n$$0_lcj5tg03bd1b(i)s6h%$j5lo_b&jcuml+)9_v'
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS=['*']
+
+DJANGO_ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', None)
+
+if(DJANGO_ALLOWED_HOSTS):
+    ALLOWED_HOSTS = DJANGO_ALLOWED_HOSTS.split(',')
 
 
 # Application definition
@@ -73,10 +79,21 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+DJANGO_DATABASE_ENGINE = os.environ.get('DJANGO_DATABASE_ENGINE', 'django.db.backends.sqlite3')
+DJANGO_DATABASE_NAME = os.environ.get('DJANGO_DATABASE_NAME', BASE_DIR / 'db.sqlite3')
+DJANGO_DATABASE_USER = os.environ.get('DJANGO_DATABASE_USER', None)
+DJANGO_DATABASE_PASSWORD = os.environ.get('DJANGO_DATABASE_PASSWORD', None)
+DJANGO_DATABASE_HOST = os.environ.get('DJANGO_DATABASE_HOST', None)
+DJANGO_DATABASE_PORT = os.environ.get('DJANGO_DATABASE_PORT', None)
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': DJANGO_DATABASE_ENGINE,
+        'NAME': DJANGO_DATABASE_NAME,
+        'USER': DJANGO_DATABASE_USER,
+        'PASSWORD': DJANGO_DATABASE_PASSWORD,
+        'HOST': DJANGO_DATABASE_HOST,
+        'PORT': DJANGO_DATABASE_PORT,
     }
 }
 
